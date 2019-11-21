@@ -5,6 +5,13 @@ import matplotlib.pyplot as pl
 import seaborn as sb
 import csv
 import math
+import random
+
+
+# !!!! FUNCOES DE TESTE
+def imprimirCentroides(centroides):
+    for centroide in centroides:
+        print('(' + str(centroide.x) + ',' + str(centroide.y) + ')', end = ' - ')
 
 # Classe Objeto
 class Objeto:
@@ -14,13 +21,95 @@ class Objeto:
         self.nome = nome
         self.x = x
         self.y = y
+        self.cluster = -1
         
-    # Distância Euclidiana
-    def distancia(self, p, q):
-        dx = p.x - q.x
-        dy = p.y - q.y
-        return math.sqrt(dx ** 2 + dy ** 2)
+# Distância Euclidiana
+def distancia(p, q):
+    return math.sqrt( (p.x - q.x) ** 2 + (p.y - q.y) ** 2)
 
+# Centróide do cluster
+def centroide(cluster):
+
+    somaX = 0.0
+    somaY = 0.0
+    n = len(cluster)
+
+    for ponto in cluster:
+        somaX += ponto.x
+
+    for ponto in cluster:
+        somaY += ponto.y
+    
+    return Objeto('', somaX / float(n), somaY / float(n))
+
+# Calcula novos clusters
+def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
+
+    novosClusters = []
+    for i in range(0, k):
+        cluster = []
+        novosClusters.append(cluster)
+
+    # print(novosClusters)
+    # print(centroides)
+
+    for ponto in pontos:
+
+        menor = 9999999999999999999
+
+        # Indice do centroide encontrado
+        i = 0
+        
+        for centroide in centroides:
+            
+            dist = distancia(ponto, centroide)
+            # print('(' + str(ponto.x) + ',' + str(ponto.y) + ') e (' + str(centroide.x) + ',' + str(centroide.y) + ') = ' + str(dist))
+            # print(dist)
+            
+            if dist < menor:
+                menor = dist
+                indice = i
+
+            i += 1
+
+        novosClusters[indice].append(ponto)
+
+    
+    # Compara se o cluster antigo é igual ao novo. Caso seja, para.
+    # TODO
+    # print(novosClusters)
+    
+
+    if n_atual == n_iteracoes:
+
+        pontos = []
+        for ponto in novosClusters[0]:
+            pontos.append([
+                ponto.x,
+                ponto.y
+            ])
+
+        df = pd.DataFrame(pontos, columns = ['d1', 'd2'], dtype = float)
+        sb.pairplot(df)
+        pl.show()
+
+        # print(novosClusters)
+
+        return novosClusters
+    else:
+        novosCentroides = calculaNovosCentroides(novosClusters)
+        # imprimirCentroides(novosCentroides)
+        # print('')
+        calculaNovosClusters(novosCentroides, pontos, novosClusters, k, n_atual + 1, n_iteracoes)
+
+
+def calculaNovosCentroides(clusters):
+
+    novosCentroides = []
+    for cluster in clusters:
+        cent = centroide(cluster)
+        novosCentroides.append(cent)
+    return novosCentroides
 
 
 # Classe KMeans
@@ -56,8 +145,43 @@ def main():
 
     # print(linhas[1].split())
 
-    # k = int(input("Número de clusters: "))
-    # n_iteracoes = int(input("Numero de iterações: "))
+    # Pergunta o número de clusters
+    k = int(input("Número de clusters: "))
+
+    # Pergunta o número máximo de iterações
+    n_iteracoes = int(input("Numero de iterações: "))
+
+    # Escolhe 'k' pontos aleatórios
+    centroides = []
+    for i in range(0, k):
+        centroides.append(random.choice(pontos))
+
+    # Cria os clusters
+    clusters = []
+    for ponto in centroides:
+        cluster = []
+        cluster.append(ponto)
+        clusters.append(cluster)
+
+    
+    novosClusters = calculaNovosClusters(centroides, pontos, clusters, k, 0, n_iteracoes)
+    # print(novosClusters)
+
+    # pontos = []
+    # for ponto in novosClusters[0]:
+    #     pontos.append([
+    #         ponto.x,
+    #         ponto.y
+    #     ])
+
+    # df = pd.DataFrame(pontos, columns = ['d1', 'd2'], dtype = float)
+    # sb.pairplot(df)
+    # pl.show()
+
+    # print(clusters)
+
+    # for p in centroides:
+    #     print(str(p.x) + ' ' + str(p.y))
 
 
     # for i in range(1, len(linhas)):
