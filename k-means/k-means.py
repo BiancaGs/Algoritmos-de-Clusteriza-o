@@ -55,7 +55,7 @@ def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
 
     for ponto in pontos:
 
-        menor = 999999999999
+        menor = 9999999999999999999
 
         # Indice do centroide encontrado
         i = 0
@@ -82,17 +82,7 @@ def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
 
     if n_atual == n_iteracoes:
 
-        pontos = []
-        for ponto in novosClusters[0]:
-            pontos.append([
-                ponto.x,
-                ponto.y
-            ])
-
-        df = pd.DataFrame(pontos, columns = ['d1', 'd2'], dtype = float)
-        sb.pairplot(df)
-        pl.show()
-
+        plotarGrafico(novosClusters)
         # print(novosClusters)
 
         return novosClusters
@@ -111,6 +101,52 @@ def calculaNovosCentroides(clusters):
         novosCentroides.append(cent)
     return novosCentroides
 
+
+# Plotar gráficos
+def plotarGrafico(novosClusters):
+
+    numeroClusters = len(novosClusters)
+
+    # Cria os dados
+    data = []
+    for cluster in novosClusters:
+        x = []
+        y = []
+        for ponto in cluster:
+            x.append(ponto.x)
+            y.append(ponto.y)
+        a = np.array(x)
+        b = np.array(y)
+        g = ( a, b )
+        data.append(g)
+    data = tuple(data)
+
+    # Cria as cores
+    colors = []
+    for i in range(0, numeroClusters):
+        r = lambda: random.randint(0,255)
+        color = '#%02X%02X%02X' % (r(),r(),r())
+        colors.append(color)
+    colors = tuple(colors)
+
+    # Cria as labels
+    labels = []
+    for i in range(0, numeroClusters):
+        nome = "cluster" + str(i)
+        labels.append(nome)
+    labels = tuple(labels)
+
+    # Cria o gráfico
+    fig = pl.figure()
+    ax = fig.add_subplot(1, 1, 1, facecolor="1.0")
+
+    for data, color, group in zip(data, colors, labels):
+        x, y = data
+        ax.scatter(x, y, alpha=0.8, c=color, edgecolors='none', s=30, label=group)
+
+    pl.title('Gráfico de clusters')
+    pl.legend(loc=2)
+    pl.show()
 
 # Classe KMeans
 class KMeans:
@@ -138,13 +174,6 @@ def main():
     for i in range(1, len(linhas) - 1):
         pontos.append( Objeto(linhas[i].split()[0], float(linhas[i].split()[1]), float(linhas[i].split()[2])) )
 
-    #!! Gera um gráfico
-    # df = pd.DataFrame(pontos, columns = ['d1', 'd2'], dtype = float)
-    # sb.pairplot(df)
-    # pl.show()
-
-    # print(linhas[1].split())
-
     # Pergunta o número de clusters
     k = int(input("Número de clusters: "))
 
@@ -165,27 +194,7 @@ def main():
 
     
     novosClusters = calculaNovosClusters(centroides, pontos, clusters, k, 0, n_iteracoes)
-    # print(novosClusters)
 
-    # pontos = []
-    # for ponto in novosClusters[0]:
-    #     pontos.append([
-    #         ponto.x,
-    #         ponto.y
-    #     ])
-
-    # df = pd.DataFrame(pontos, columns = ['d1', 'd2'], dtype = float)
-    # sb.pairplot(df)
-    # pl.show()
-
-    # print(clusters)
-
-    # for p in centroides:
-    #     print(str(p.x) + ' ' + str(p.y))
-
-
-    # for i in range(1, len(linhas)):
-    #     print(linhas[i])
 
 
 if __name__ == "__main__":
