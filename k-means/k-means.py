@@ -55,7 +55,7 @@ def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
 
     for ponto in pontos:
 
-        menor = 9999999999999999999
+        menor = 999999999999
 
         # Indice do centroide encontrado
         i = 0
