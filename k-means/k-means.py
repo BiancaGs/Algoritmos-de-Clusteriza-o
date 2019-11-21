@@ -4,26 +4,65 @@ import pandas as pd
 import matplotlib.pyplot as pl
 import seaborn as sb
 import csv
+import math
 
-# Open .txt with the data
-file = open('../Instrucoes/datasets/c2ds1-2sp.txt', 'r')
+# Classe Objeto
+class Objeto:
 
-# Split file data into lines
-lines = file.read().split('\n')
+    # Construtor
+    def __init__(self, nome, x, y):
+        self.nome = nome
+        self.x = x
+        self.y = y
+        
+    # Distância Euclidiana
+    def distancia(self, p, q):
+        dx = p.x - q.x
+        dy = p.y - q.y
+        return math.sqrt(dx ** 2 + dy ** 2)
 
-# Generate array of points
-points = []
-for i in range(1, len(lines)):
-    points.append([lines[i].split()[0], lines[i].split()[1], lines[i].split()[2]])
 
-# Plot graph
-df = pd.DataFrame(points, columns = ['sample_label', 'd1', 'd2'], dtype = float)
-sb.pairplot(df)
-pl.show()
 
-print(lines[1].split())
+# Classe KMeans
+class KMeans:
 
-# k = int(input("Número de clusters: "))
+    def __init__(self, k = 3, tolerancia = 0.0001, max_iteracoes = 500):
+        self.k = k
+        self.tolerancia = tolerancia
+        self.max_iteracoes = max_iteracoes
 
-# for i in range(1, len(lines)):
-#     print(lines[i])
+
+# ====================================
+# ============= MAIN =================
+# ====================================
+
+def main():
+
+    # Abre o arquivo .txt com os dados
+    arquivo = open('../Instrucoes/datasets/c2ds1-2sp.txt', 'r')
+
+    # Separa as linhas do arquivo
+    linhas = arquivo.read().split('\n')
+
+    # Gera o vetor de pontos
+    pontos = []
+    for i in range(1, len(linhas) - 1):
+        pontos.append( Objeto(linhas[i].split()[0], float(linhas[i].split()[1]), float(linhas[i].split()[2])) )
+
+    #!! Gera um gráfico
+    # df = pd.DataFrame(pontos, columns = ['d1', 'd2'], dtype = float)
+    # sb.pairplot(df)
+    # pl.show()
+
+    # print(linhas[1].split())
+
+    # k = int(input("Número de clusters: "))
+    # n_iteracoes = int(input("Numero de iterações: "))
+
+
+    # for i in range(1, len(linhas)):
+    #     print(linhas[i])
+
+
+if __name__ == "__main__":
+    main()
