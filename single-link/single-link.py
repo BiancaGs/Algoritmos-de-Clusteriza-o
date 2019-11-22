@@ -32,13 +32,13 @@ def distanciaClusters(cluster1, cluster2):
     # Menor Distância
     mDistancia = 999999999999
 
-    for pontoC1 in cluster1:
-        for pontoC2 in cluster2:
-            # Distância
-            d = distancia(pontoC1, pontoC2)
+    # for pontoC1 in cluster1:
+    #     for pontoC2 in cluster2:
+    # Distância
+    d = distancia(cluster1[0], cluster2[0])
 
-            if d < mDistancia:
-                mDistancia = d
+    if d < mDistancia:
+        mDistancia = d
 
     return mDistancia
 
@@ -137,6 +137,7 @@ def main():
 # - Intervalo de valores para k (número de clusters) em que serão produzidas partições a partir de cortes no dendrograma
 
 
+
     # Abre o arquivo .txt com os dados
     arquivo = open('../Instrucoes/datasets/c2ds1-2sp.txt', 'r')
 
@@ -159,7 +160,7 @@ def main():
         cluster = []
         cluster.append(ponto)
         clusters.append(cluster)
-
+     
     # print(clusters)
 
     # kMin
@@ -181,7 +182,7 @@ def main():
 
         # print(str(c1)+ ' '+ str(c2))
 
-        # print(len(clusters))
+        print(len(clusters))
 
         # Integra os clusters mais próximos
         clusters[c1].extend(clusters[c2])
@@ -193,10 +194,6 @@ def main():
         del clusters[c2]
 
         # print(len(clusters))
-
-
-
-
 
 if __name__ == "__main__":
     main()

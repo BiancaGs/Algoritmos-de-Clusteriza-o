@@ -7,6 +7,8 @@ import csv
 import math
 import random
 
+from sklearn.metrics.cluster import adjusted_rand_score
+
 
 # !!!! FUNCOES DE TESTE
 def imprimirCentroides(centroides):
@@ -82,7 +84,7 @@ def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
 
     if n_atual == n_iteracoes:
 
-        plotarGrafico(novosClusters)
+        plotarGrafico(novosClusters, centroides)
         # print(novosClusters)
 
         return novosClusters
@@ -103,9 +105,17 @@ def calculaNovosCentroides(clusters):
 
 
 # Plotar gráficos
-def plotarGrafico(novosClusters):
+def plotarGrafico(novosClusters, centroides):
 
     numeroClusters = len(novosClusters)
+
+    cent = []
+    for centroide in centroides:
+        cent.append([
+            centroide.x,
+            centroide.y
+        ])
+    cent = np.array(cent)
 
     dataframe = []
 
@@ -128,8 +138,8 @@ def plotarGrafico(novosClusters):
     data = tuple(data)
 
     df = pd.DataFrame(dataframe, columns = ['nome', 'cluster'])
-    # Escreve no arquivo de saída
-    np.savetxt('saida.txt', df.values, fmt='%s %d', delimiter="\t", header="Nome\tCluster")
+    # # Escreve no arquivo de saída
+    # np.savetxt('saida.txt', df.values, fmt='%s %d', delimiter="\t", header="Nome\tCluster")
 
     # Cria as cores
     colors = []
@@ -153,6 +163,7 @@ def plotarGrafico(novosClusters):
     for data, color, group in zip(data, colors, labels):
         x, y = data
         ax.scatter(x, y, alpha=0.8, c=color, edgecolors='none', s=30, label=group)
+    ax.scatter(cent[:, 0], cent[:, 1], c='red', s=50)
 
     pl.title('Gráfico de clusters')
     pl.legend(loc=2)
@@ -196,7 +207,6 @@ def main():
 
     
     novosClusters = calculaNovosClusters(centroides, pontos, clusters, k, 0, n_iteracoes)
-
 
 
 if __name__ == "__main__":
