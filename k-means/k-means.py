@@ -78,20 +78,25 @@ def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
 
         if ponto.cluster != indice:
             mudou = 1
+
+        # Atualiza o cluster do ponto
         ponto.cluster = indice
+        # Adiciona o ponto ao novo cluster
         novosClusters[indice].append(ponto)
 
-    
+
     # Compara se o cluster antigo é igual ao novo. Caso seja, para.
     if mudou == 0:
         print('clusters não mudaram na iteracao: ' + str(n_atual))
+        plotarGrafico(novosClusters, centroides)
+        return novosClusters
 
+    # Verifica se não está na última iteração
     if n_atual == n_iteracoes:
 
         plotarGrafico(novosClusters, centroides)
-        # print(novosClusters)
-
         return novosClusters
+
     else:
         novosCentroides = calculaNovosCentroides(novosClusters)
         # imprimirCentroides(novosCentroides)
