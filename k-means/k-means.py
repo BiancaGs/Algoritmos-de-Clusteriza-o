@@ -107,12 +107,18 @@ def plotarGrafico(novosClusters):
 
     numeroClusters = len(novosClusters)
 
+    dataframe = []
+
     # Cria os dados
     data = []
-    for cluster in novosClusters:
+    for indiceCluster, cluster in enumerate(novosClusters):
         x = []
         y = []
         for ponto in cluster:
+            dataframe.append([
+                ponto.nome,
+                indiceCluster
+            ])
             x.append(ponto.x)
             y.append(ponto.y)
         a = np.array(x)
@@ -120,6 +126,10 @@ def plotarGrafico(novosClusters):
         g = ( a, b )
         data.append(g)
     data = tuple(data)
+
+    df = pd.DataFrame(dataframe, columns = ['nome', 'cluster'])
+    # Escreve no arquivo de saída
+    np.savetxt('saida.txt', df.values, fmt='%s %d', delimiter="\t", header="Nome\tCluster")
 
     # Cria as cores
     colors = []
