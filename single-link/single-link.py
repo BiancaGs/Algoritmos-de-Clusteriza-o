@@ -32,13 +32,13 @@ def distanciaClusters(cluster1, cluster2):
     # Menor Distância
     mDistancia = 999999999999
 
-    # for pontoC1 in cluster1:
-    #     for pontoC2 in cluster2:
-    # Distância
-    d = distancia(cluster1[0], cluster2[0])
+    for pontoC1 in cluster1:
+        for pontoC2 in cluster2:
+            # Distância
+            d = distancia(pontoC1, pontoC2)
 
-    if d < mDistancia:
-        mDistancia = d
+            if d < mDistancia:
+                mDistancia = d
 
     return mDistancia
 
