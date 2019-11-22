@@ -47,6 +47,8 @@ def centroide(cluster):
 # Calcula novos clusters
 def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
 
+    mudou = 0
+
     novosClusters = []
     for i in range(0, k):
         cluster = []
@@ -74,13 +76,15 @@ def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
 
             i += 1
 
+        if ponto.cluster != indice:
+            mudou = 1
+        ponto.cluster = indice
         novosClusters[indice].append(ponto)
 
     
     # Compara se o cluster antigo é igual ao novo. Caso seja, para.
-    # TODO
-    # print(novosClusters)
-    
+    if mudou == 0:
+        print('clusters não mudaram na iteracao: ' + str(n_atual))
 
     if n_atual == n_iteracoes:
 
