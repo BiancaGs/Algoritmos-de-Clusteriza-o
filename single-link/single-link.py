@@ -50,7 +50,12 @@ def clusterProximo(clusters):
     # Menor Distância
     mDistancia = 999999999999
 
+    # Indice do Cluster 1 e 2, respectivamente
+    i = 0
+    j = 0
+
     for cluster1 in clusters:
+        j = 0
         for cluster2 in clusters:
             d = distanciaClusters(cluster1, cluster2)
             # print(d)
@@ -59,8 +64,10 @@ def clusterProximo(clusters):
                 if d < mDistancia:
                     # print(mDistancia)
                     mDistancia = d
-                    c1 = cluster1
-                    c2 = cluster2
+                    c1 = i
+                    c2 = j
+            j += 1        
+        i += 1
     
     return mDistancia, c1, c2
 
@@ -105,7 +112,29 @@ def main():
     # kMax
     kMax = int(input("kMax: "))
 
-    print(clusterProximo(clusters));
+
+    while len(clusters) > kMax: #?
+
+        # if( len(clusters) >= kMin and len(clusters) >= kMax )
+            # Escreve arquivo
+
+        mDistancia, c1, c2 = clusterProximo(clusters)
+
+        # print(str(c1)+ ' '+ str(c2))
+
+        print(len(clusters))
+
+        # Integra os clusters mais próximos
+        clusters[c1].extend(clusters[c2])
+
+        # Verifica se de fato houve integração entre os clusters
+        # for p in clusters[0]:
+        #     print(str(p.x) + ' ' + str(p.y))
+
+        del clusters[c2]
+
+        print(len(clusters))
+
     
 
 
