@@ -148,14 +148,6 @@ def plotarGrafico(novosClusters):
     pl.legend(loc=2)
     pl.show()
 
-# Classe KMeans
-class KMeans:
-
-    def __init__(self, k = 3, tolerancia = 0.0001, max_iteracoes = 500):
-        self.k = k
-        self.tolerancia = tolerancia
-        self.max_iteracoes = max_iteracoes
-
 
 # ====================================
 # ============= MAIN =================
@@ -164,7 +156,7 @@ class KMeans:
 def main():
 
     # Abre o arquivo .txt com os dados
-    arquivo = open('../Instrucoes/datasets/c2ds1-2sp.txt', 'r')
+    arquivo = open('../Instrucoes/datasets/monkey.txt', 'r')
 
     # Separa as linhas do arquivo
     linhas = arquivo.read().split('\n')
