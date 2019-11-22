@@ -45,7 +45,7 @@ def centroide(cluster):
     return Objeto('', somaX / float(n), somaY / float(n))
 
 # Calcula novos clusters
-def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
+def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes, valoresClustersReais, nomeArquivo):
 
     mudou = 0
 
@@ -88,20 +88,20 @@ def calculaNovosClusters(centroides, pontos, clusters, k, n_atual, n_iteracoes):
     # Compara se o cluster antigo é igual ao novo. Caso seja, para.
     if mudou == 0:
         print('clusters não mudaram na iteracao: ' + str(n_atual))
-        plotarGrafico(novosClusters, centroides)
+        plotarGrafico(novosClusters, centroides, valoresClustersReais, nomeArquivo, k)
         return novosClusters
 
     # Verifica se não está na última iteração
     if n_atual == n_iteracoes:
 
-        plotarGrafico(novosClusters, centroides)
+        plotarGrafico(novosClusters, centroides, valoresClustersReais, nomeArquivo, k)
         return novosClusters
 
     else:
         novosCentroides = calculaNovosCentroides(novosClusters)
         # imprimirCentroides(novosCentroides)
         # print('')
-        calculaNovosClusters(novosCentroides, pontos, novosClusters, k, n_atual + 1, n_iteracoes)
+        calculaNovosClusters(novosCentroides, pontos, novosClusters, k, n_atual + 1, n_iteracoes, valoresClustersReais, nomeArquivo)
 
 
 def calculaNovosCentroides(clusters):
@@ -114,7 +114,7 @@ def calculaNovosCentroides(clusters):
 
 
 # Plotar gráficos
-def plotarGrafico(novosClusters, centroides):
+def plotarGrafico(novosClusters, centroides, valoresClustersReais, nomeArquivo, kClusters):
 
     numeroClusters = len(novosClusters)
 
@@ -127,6 +127,7 @@ def plotarGrafico(novosClusters, centroides):
     cent = np.array(cent)
 
     dataframe = []
+    valoresNovosClusters = []
 
     # Cria os dados
     data = []
@@ -134,6 +135,7 @@ def plotarGrafico(novosClusters, centroides):
         x = []
         y = []
         for ponto in cluster:
+            valoresNovosClusters.append(ponto.cluster)
             dataframe.append([
                 ponto.nome,
                 indiceCluster
@@ -147,8 +149,14 @@ def plotarGrafico(novosClusters, centroides):
     data = tuple(data)
 
     df = pd.DataFrame(dataframe, columns = ['nome', 'cluster'])
-    # # Escreve no arquivo de saída
-    # np.savetxt('saida.txt', df.values, fmt='%s %d', delimiter="\t", header="Nome\tCluster")
+
+    # Escreve no arquivo de saída
+    np.savetxt(nomeArquivo + '-k' + str(kClusters) + '-saida.txt', df.values, fmt='%s %d', delimiter="\t", header="Nome\tCluster")
+
+    # Calcula o índice rand (AR)
+    indRand = adjusted_rand_score(valoresNovosClusters, valoresClustersReais)
+    print('AR: ' + str(indRand))
+
 
     # Cria as cores
     colors = []
@@ -186,15 +194,24 @@ def plotarGrafico(novosClusters, centroides):
 def main():
 
     # Abre o arquivo .txt com os dados
-    arquivo = open('../Instrucoes/datasets/monkey.txt', 'r')
+    nomeArquivo = 'monkey'
+    arquivo = open('../Instrucoes/datasets/' + nomeArquivo + '.txt', 'r')
+
+    # Abre o arquivo .txt com os dados REAIS
+    arquivoReal = open('../Instrucoes/datasets/' + nomeArquivo + 'Real.clu', 'r')
 
     # Separa as linhas do arquivo
     linhas = arquivo.read().split('\n')
+    linhasReal = arquivoReal.read().split('\n')
+    valoresClustersReais = []
+    for i in range(0, len(linhasReal) - 1):
+        valoresClustersReais.append(linhasReal[i].split()[1])
 
     # Gera o vetor de pontos
     pontos = []
     for i in range(1, len(linhas) - 1):
         pontos.append( Objeto(linhas[i].split()[0], float(linhas[i].split()[1]), float(linhas[i].split()[2])) )
+
 
     # Pergunta o número de clusters
     k = int(input("Número de clusters: "))
@@ -215,7 +232,7 @@ def main():
         clusters.append(cluster)
 
     
-    novosClusters = calculaNovosClusters(centroides, pontos, clusters, k, 0, n_iteracoes)
+    novosClusters = calculaNovosClusters(centroides, pontos, clusters, k, 0, n_iteracoes, valoresClustersReais, nomeArquivo)
 
 
 if __name__ == "__main__":
