@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
-# import matplotlib.pyplot as pl
-# import seaborn as sb
+import matplotlib.pyplot as pl
+import seaborn as sb
+from scipy.spatial import distance_matrix
+from scipy.cluster.hierarchy import dendrogram, linkage
 import csv
 import math
 import random
@@ -43,10 +45,14 @@ def main():
     for i in range(1, len(linhas) - 1):
         pontos.append( Objeto(linhas[i].split()[0], float(linhas[i].split()[1]), float(linhas[i].split()[2])) )
 
-    #!! Gera um gráfico
-    # df = pd.DataFrame(pontos, columns = ['d1', 'd2'], dtype = float)
-    # sb.pairplot(df)
-    # pl.show()
+    p = []
+    for ponto in pontos:
+        p.append([
+            ponto.x, ponto.y
+        ])
+
+    df = pd.DataFrame(p, columns = ['x', 'y'], dtype = float)
+    distanceMatrix = pd.DataFrame(distance_matrix(df.values, df.values), index=df.index, columns=df.index)
 
     # print(linhas[1].split())
 
