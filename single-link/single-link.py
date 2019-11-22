@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-# import matplotlib.pyplot as pl
-# import seaborn as sb
+import matplotlib.pyplot as pl
+import seaborn as sb
 import csv
 import math
 import random
@@ -23,7 +23,6 @@ def distancia(p, q):
 
 # # Classe SingleLink
 # class SingleLink:
-
 
 
 # Distância entre Clusters
@@ -71,6 +70,63 @@ def clusterProximo(clusters):
     
     return mDistancia, c1, c2
 
+# Plotar gráficos
+def plotarGrafico(novosClusters):
+
+    numeroClusters = len(novosClusters)
+
+    dataframe = []
+
+    # Cria os dados
+    data = []
+    for indiceCluster, cluster in enumerate(novosClusters):
+        x = []
+        y = []
+        for ponto in cluster:
+            dataframe.append([
+                ponto.nome,
+                indiceCluster
+            ])
+            x.append(ponto.x)
+            y.append(ponto.y)
+        a = np.array(x)
+        b = np.array(y)
+        g = ( a, b )
+        data.append(g)
+    data = tuple(data)
+
+    df = pd.DataFrame(dataframe, columns = ['nome', 'cluster'])
+    # Escreve no arquivo de saída
+    np.savetxt('saida.txt', df.values, fmt='%s %d', delimiter="\t", header="Nome\tCluster")
+
+    # Cria as cores
+    colors = []
+    for i in range(0, numeroClusters):
+        r = lambda: random.randint(0,255)
+        color = '#%02X%02X%02X' % (r(),r(),r())
+        colors.append(color)
+    colors = tuple(colors)
+
+    # Cria as labels
+    labels = []
+    for i in range(0, numeroClusters):
+        nome = "cluster" + str(i)
+        labels.append(nome)
+    labels = tuple(labels)
+
+    # Cria o gráfico
+    fig = pl.figure()
+    ax = fig.add_subplot(1, 1, 1, facecolor="1.0")
+
+    for data, color, group in zip(data, colors, labels):
+        x, y = data
+        ax.scatter(x, y, alpha=0.8, c=color, edgecolors='none', s=30, label=group)
+
+    pl.title('Gráfico de clusters')
+    pl.legend(loc=2)
+    pl.show()
+
+
 # ====================================
 # ============= MAIN =================
 # ====================================
@@ -113,16 +169,19 @@ def main():
     kMax = int(input("kMax: "))
 
 
-    while len(clusters) > kMax: #?
+    while 1: #?
 
-        # if( len(clusters) >= kMin and len(clusters) >= kMax )
-            # Escreve arquivo
+        if( len(clusters) >= kMin and len(clusters) <= kMax ):
+            # print(len(clusters))
+            # print(clusters)
+            plotarGrafico(clusters)
+            break
 
         mDistancia, c1, c2 = clusterProximo(clusters)
 
         # print(str(c1)+ ' '+ str(c2))
 
-        print(len(clusters))
+        # print(len(clusters))
 
         # Integra os clusters mais próximos
         clusters[c1].extend(clusters[c2])
@@ -133,9 +192,10 @@ def main():
 
         del clusters[c2]
 
-        print(len(clusters))
+        # print(len(clusters))
 
-    
+
+
 
 
 if __name__ == "__main__":
