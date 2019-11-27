@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as pl
+from scipy.cluster.hierarchy import dendrogram, linkage
+from scipy.cluster.hierarchy import single, fcluster
+from scipy.spatial.distance import pdist
 import seaborn as sb
 import csv
 import math
@@ -169,6 +172,19 @@ def main():
     # kMax
     kMax = int(input("kMax: "))
 
+    p = []
+    for ponto in pontos:
+        p.append([
+            ponto.x, ponto.y
+        ])
+
+    # y = pdist(p)
+    # Z = single(y)
+    # print(Z)
+    # fig = pl.figure(figsize=(25, 10))
+    # dn = dendrogram(Z)
+    # pl.show()
+    # return
 
     while 1: #?
 
